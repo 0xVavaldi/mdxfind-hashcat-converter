@@ -35,18 +35,20 @@ def load_algorithms():
         return algorithms
 
 if __name__ == '__main__':
-    # 
     algorithms = load_algorithms()
     arguments = docopt(__doc__, version='1.0')
     file_1 = "./mixed_founds.cracked"
     file_2 = "./mixed_salted_founds.cracked"
     file_3 = "./left_founds.cracked"
-    output_file_handle_1 = open(file_1, 'a+')
-    output_file_handle_2 = open(file_2, 'a+')
-    output_file_handle_3 = open(file_3, 'a+')
+    output_file_handle_1 = open(file_1, 'a+', encoding="utf-8")
+    output_file_handle_2 = open(file_2, 'a+', encoding="utf-8")
+    output_file_handle_3 = open(file_3, 'a+', encoding="utf-8")
 
-    with open('./' + arguments['--input-file'], 'r') as input_file:
+    with open('./' + arguments['--input-file'], 'r', encoding='utf-8') as input_file:
         for i, line in enumerate(input_file):
+            if ' ' not in line:
+                print(line.rstrip())
+                continue
             hash_algorithm, hash_ = line.rstrip().split(' ', 1)
             # find a match in algorithms
             matched = False
@@ -58,7 +60,7 @@ if __name__ == '__main__':
                     else:
                         output_file_handle_1.write(algorithm['hashesorg'] + " " + hash_ + "\n")
                     matched = True
-                    break
+                    # do not break, this will give duplicate output in some cases but is a dirty solution to algorithms not quite matching.
             if not matched:
                 output_file_handle_3.write(hash_algorithm + " " + hash_ + "\n")
     print("Done, making files sorted & unique")
