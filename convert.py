@@ -37,7 +37,7 @@ def load_algorithms():
 if __name__ == '__main__':
     # 
     algorithms = load_algorithms()
-    arguments = docopt(__doc__, version='0.1')
+    arguments = docopt(__doc__, version='1.0')
     file_1 = "./mixed_founds.cracked"
     file_2 = "./mixed_salted_founds.cracked"
     file_3 = "./left_founds.cracked"

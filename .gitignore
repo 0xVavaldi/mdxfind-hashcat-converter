@@ -1,2 +1,5 @@
 virtualenv.sh
 cracked.txt
+left_founds.cracked
+mixed_founds.cracked
+mixed_salted_founds.cracked
