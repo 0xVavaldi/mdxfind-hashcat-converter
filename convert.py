@@ -44,6 +44,7 @@ if __name__ == '__main__':
                 print(line.rstrip())
                 continue
             hash_algorithm, hash_ = line.rstrip().split(' ', 1)
+            hash_algorithm = hash_algorithm.replace("x01", "")
             # find a match in algorithms
             matched = False
             for algorithm in algorithms:
@@ -55,6 +56,4 @@ if __name__ == '__main__':
                     # do not break, this will give duplicate output in some cases but is a dirty solution to algorithms not quite matching.
             if not matched:
                 output_file_handle_1.write(hash_algorithm + " " + hash_ + "\n")
-    print("Done, making files sorted & unique")
-    os.system("sort -u " + file_1 + "> tmp")
-    os.replace("tmp", file_1)
+    print("Done.")
