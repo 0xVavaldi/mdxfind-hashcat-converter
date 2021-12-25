@@ -1,4 +1,4 @@
-"""MDxFind algorithm converter
+"""MDxFind algorithm converter -Hashcat
 
 Usage:
   convert.py --input-file=<file>
@@ -15,34 +15,28 @@ Credits:
   - Tycho
   - S3in!c
   - penguinkeeper
-  Author of the program:
-  - 0x69BE027C97
 """
 from docopt import docopt
 import os
 
 def load_algorithms():
     algorithms = []
-    with open('./algorithms.txt', 'r') as input_file:
+    with open('./algorithms-2.0.txt', 'r') as input_file:
         for i, line in enumerate(input_file):
             if not i:
                 continue
-            mdxfind, hashesorg = line.rstrip().split('\t')
+            mdxfind, hashcat = line.rstrip().split('\t')
             algorithms.append({
                     'mdxfind': mdxfind,
-                    'hashesorg': hashesorg
+                    'hashcat': hashcat
                 })
         return algorithms
 
 if __name__ == '__main__':
     algorithms = load_algorithms()
     arguments = docopt(__doc__, version='1.0')
-    file_1 = "./mixed_founds.cracked"
-    file_2 = "./mixed_salted_founds.cracked"
-    file_3 = "./left_founds.cracked"
+    file_1 = "./others.cracked"
     output_file_handle_1 = open(file_1, 'a+', encoding="utf-8")
-    output_file_handle_2 = open(file_2, 'a+', encoding="utf-8")
-    output_file_handle_3 = open(file_3, 'a+', encoding="utf-8")
 
     with open('./' + arguments['--input-file'], 'r', encoding='utf-8') as input_file:
         for i, line in enumerate(input_file):
@@ -55,21 +49,12 @@ if __name__ == '__main__':
             for algorithm in algorithms:
                 if hash_algorithm == algorithm['mdxfind']:
                     # split by salt or not
-                    if "SALT" in algorithm['mdxfind'] or "SALT" in algorithm['hashesorg']:
-                        output_file_handle_2.write(algorithm['hashesorg'] + " " + hash_ + "\n")
-                    else:
-                        output_file_handle_1.write(algorithm['hashesorg'] + " " + hash_ + "\n")
+                    output_file_handle_2 = open(algorithm['hashcat'] + ".cracked", 'a+', encoding="utf-8")
+                    output_file_handle_2.write(hash_ + "\n")
                     matched = True
                     # do not break, this will give duplicate output in some cases but is a dirty solution to algorithms not quite matching.
             if not matched:
-                output_file_handle_3.write(hash_algorithm + " " + hash_ + "\n")
+                output_file_handle_1.write(hash_algorithm + " " + hash_ + "\n")
     print("Done, making files sorted & unique")
     os.system("sort -u " + file_1 + "> tmp")
     os.replace("tmp", file_1)
-    os.system("sort -u " + file_2 + "> tmp")
-    os.replace("tmp", file_2)
-    os.system("sort -u " + file_3 + "> tmp")
-    os.replace("tmp", file_3)
-    print("Done! Now upload " + file_1 + " to hashes.org with algorithm \"mm\" and no salt")
-    print("upload " + file_2 + " to hashes.org with algorithm \"mm\" and \":\" as salt, with checkbox")
-    print(file_3 + " Contains hashes that did not match any in the algorithm list.")
